@@ -101,7 +101,7 @@ fun MainScreen(navController: NavController) {
 
                     Button(
                         onClick = {
-                            // Начало викторины
+                            navController.navigate("quiz")
                         },
                         modifier = Modifier
                             .fillMaxWidth()
