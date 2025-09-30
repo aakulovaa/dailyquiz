@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,14 +28,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dailyquiz.R
+import com.example.dailyquiz.data.repository.HistoryRepository
+import com.example.dailyquiz.domain.models.Quiz
+import com.example.dailyquiz.domain.models.QuizAttempt
+import com.example.dailyquiz.ui.screens.history.HistoryViewModel
+import com.example.dailyquiz.ui.screens.history.HistoryViewModelFactory
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
+import java.util.Date
 
 @Composable
-fun ResultsScreen(navController: NavController) {
+fun ResultsScreen(
+    navController: NavController,
+    repository: HistoryRepository,
+    questions: List<Quiz> = testQuestions
+) {
     val correctAnswers = testQuestions.count { it.quizUserAnswer == it.quizCorrectAnswer }
     val totalQuestions = testQuestions.size
+
+    // Получаем ViewModel через фабрику
+    val viewModel: HistoryViewModel = viewModel(
+        factory = HistoryViewModelFactory(repository)
+    )
+
+    // Сохраняем попытку при первом показе экрана
+    LaunchedEffect(Unit) {
+        val attempt = QuizAttempt(
+            quizTitle = "Quiz ${repository.attempts.value.size + 1}",
+            timestamp = System.currentTimeMillis(),
+            correctAnswers = correctAnswers,
+            totalQuestions = totalQuestions,
+            questions = questions.map { it.copy() }
+        )
+        viewModel.saveQuizAttempt(attempt)
+    }
+
 
     // Определяем количество закрашенных звезд
     val filledStars = when (correctAnswers) {
@@ -144,7 +174,7 @@ fun ResultsScreen(navController: NavController) {
 
                 Button(
                     onClick = {
-                        testQuestions.forEach { it.quizUserAnswer = null }
+                        questions.forEach { it.quizUserAnswer = null }
                         navController.popBackStack("main", inclusive = false)
                     },
                     modifier = Modifier
