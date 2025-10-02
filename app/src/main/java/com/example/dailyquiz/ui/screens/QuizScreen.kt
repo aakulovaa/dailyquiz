@@ -40,7 +40,6 @@ import com.example.dailyquiz.R
 import com.example.dailyquiz.domain.models.Quiz
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 
-// Test data for quiz questions
 val testQuestions = listOf(
     Quiz(
         quizId = 1,

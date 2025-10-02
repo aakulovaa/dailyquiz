@@ -37,7 +37,6 @@ import com.example.dailyquiz.domain.models.QuizAttempt
 import com.example.dailyquiz.ui.screens.history.HistoryViewModel
 import com.example.dailyquiz.ui.screens.history.HistoryViewModelFactory
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
-import java.util.Date
 
 @Composable
 fun ResultsScreen(
@@ -48,12 +47,10 @@ fun ResultsScreen(
     val correctAnswers = testQuestions.count { it.quizUserAnswer == it.quizCorrectAnswer }
     val totalQuestions = testQuestions.size
 
-    // Получаем ViewModel через фабрику
     val viewModel: HistoryViewModel = viewModel(
         factory = HistoryViewModelFactory(repository)
     )
 
-    // Сохраняем попытку при первом показе экрана
     LaunchedEffect(Unit) {
         val attempt = QuizAttempt(
             quizTitle = "Quiz ${repository.attempts.value.size + 1}",
@@ -66,17 +63,15 @@ fun ResultsScreen(
     }
 
 
-    // Определяем количество закрашенных звезд
     val filledStars = when (correctAnswers) {
-        totalQuestions -> 5 // 5/5
-        totalQuestions - 1 -> 4 // 4/5
-        totalQuestions - 2 -> 3 // 3/5
-        totalQuestions - 3 -> 2 // 2/5
-        totalQuestions - 4 -> 1 // 1/5
-        else -> 0 // 0/5
+        totalQuestions -> 5
+        totalQuestions - 1 -> 4
+        totalQuestions - 2 -> 3
+        totalQuestions - 3 -> 2
+        totalQuestions - 4 -> 1
+        else -> 0
     }
 
-    // Определяем текстовую оценку
     val resultTextTitle = when (correctAnswers) {
         totalQuestions -> "Идеально!"
         totalQuestions - 1 -> "Почти идеально!"
@@ -142,7 +137,6 @@ fun ResultsScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Результаты
                 Text(
                     text = "$correctAnswers из $totalQuestions",
                     color = Color(0xFFFFB400),

@@ -1,6 +1,8 @@
 package com.example.dailyquiz.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -9,10 +11,19 @@ import com.example.dailyquiz.ui.screens.MainScreen
 import com.example.dailyquiz.ui.screens.QuizScreen
 import com.example.dailyquiz.ui.screens.ResultsScreen
 import com.example.dailyquiz.ui.screens.history.HistoryScreen
+import com.example.dailyquiz.ui.screens.history.HistoryViewModel
+import com.example.dailyquiz.ui.screens.history.HistoryViewModelFactory
+import com.example.dailyquiz.ui.screens.resultPreview.ReviewResultScreen
 
 @Composable
 fun QuizAppNavigation() {
     val navController = rememberNavController()
+
+    val repository = remember { HistoryRepository() }
+    // Создаем общий ViewModel
+    val historyViewModel: HistoryViewModel = viewModel(
+        factory = HistoryViewModelFactory()
+    )
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
@@ -22,5 +33,15 @@ fun QuizAppNavigation() {
 
         composable("results") { ResultsScreen(navController, repository) }
         composable("history") { HistoryScreen(navController, repository) }
+
+        composable("review/{attemptId}") { backStackEntry ->
+            val attemptId = backStackEntry.arguments?.getString("attemptId")
+            ReviewResultScreen(
+                navController = navController,
+                repository,
+                attemptId = attemptId
+            )
+        }
+
     }
 }
