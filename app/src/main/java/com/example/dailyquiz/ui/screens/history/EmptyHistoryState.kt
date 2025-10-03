@@ -46,7 +46,7 @@ fun EmptyHistoryState(navController: NavController) {
             )
 
             Button(
-                onClick = { navController.navigate("quiz") },
+                onClick = { navController.navigate("main") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),

@@ -46,8 +46,9 @@ fun ResultsScreen(
     val questions = navController.previousBackStackEntry?.savedStateHandle?.get<List<Quiz>>("quizQuestions")
         ?: emptyList()
 
-    val correctAnswers = questions.count { it.quizUserAnswer == it.quizCorrectAnswer }
+    val correctAnswers = questions.count { it.quizUserAnswer != "TIMEOUT" && it.quizUserAnswer == it.quizCorrectAnswer }
     val totalQuestions = questions.size
+    val timedOut = questions.any { it.quizUserAnswer == "TIMEOUT" }
 
     val viewModel: HistoryViewModel = viewModel(
         factory = HistoryViewModelFactory(repository)
@@ -59,7 +60,8 @@ fun ResultsScreen(
             timestamp = System.currentTimeMillis(),
             correctAnswers = correctAnswers,
             totalQuestions = totalQuestions,
-            questions = questions.map { it.copy() }
+            questions = questions.map { it.copy() },
+            timeOut = timedOut
         )
         viewModel.saveQuizAttempt(attempt)
     }

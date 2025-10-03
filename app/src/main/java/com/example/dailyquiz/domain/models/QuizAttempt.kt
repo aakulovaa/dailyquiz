@@ -8,5 +8,6 @@ data class QuizAttempt(
     val timestamp: Long = System.currentTimeMillis(),
     val correctAnswers: Int,
     val totalQuestions: Int,
-    val questions: List<Quiz>
+    val questions: List<Quiz>,
+    val timeOut: Boolean
 )

@@ -54,7 +54,7 @@ fun MainContent(
                 ),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
             ) {
-                Text("История ⏱️", fontWeight = FontWeight.Medium)
+                Text("История 🕒", fontWeight = FontWeight.Medium)
             }
         }
 
