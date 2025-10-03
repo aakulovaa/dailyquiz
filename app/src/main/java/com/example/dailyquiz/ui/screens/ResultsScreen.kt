@@ -50,6 +50,9 @@ fun ResultsScreen(
     val totalQuestions = questions.size
     val timedOut = questions.any { it.quizUserAnswer == "TIMEOUT" }
 
+    val selectedCategory = navController.previousBackStackEntry?.savedStateHandle?.get<String>("selectedCategory") ?: "Общие знания"
+    val selectedDifficulty = navController.previousBackStackEntry?.savedStateHandle?.get<String>("selectedDifficulty") ?: "Легкая"
+
     val viewModel: HistoryViewModel = viewModel(
         factory = HistoryViewModelFactory(repository)
     )
@@ -61,7 +64,9 @@ fun ResultsScreen(
             correctAnswers = correctAnswers,
             totalQuestions = totalQuestions,
             questions = questions.map { it.copy() },
-            timeOut = timedOut
+            timeOut = timedOut,
+            category = selectedCategory,
+            difficulty = selectedDifficulty
         )
         viewModel.saveQuizAttempt(attempt)
     }
@@ -109,7 +114,25 @@ fun ResultsScreen(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Категория: $selectedCategory",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Сложность: $selectedDifficulty",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
 
         Card(

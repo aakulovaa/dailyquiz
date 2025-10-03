@@ -77,9 +77,11 @@ fun MainScreen(navController: NavController) {
             quizState is QuizState.Success -> {
                 val questions = (quizState as QuizState.Success).questions
                 LaunchedEffect(questions) {
-                    navController.currentBackStackEntry?.savedStateHandle?.set(
-                        "quizQuestions", questions
-                    )
+                    navController.currentBackStackEntry?.savedStateHandle?.apply {
+                        set("quizQuestions", questions)
+                        set("selectedCategory", viewModel.categories.find { it.first == viewModel.selectedCategory }?.second ?: "Общие знания")
+                        set("selectedDifficulty", viewModel.difficulties.find { it.first == viewModel.selectedDifficulty }?.second ?: "Легкая")
+                    }
                     navController.navigate("quiz")
                     isLoading = false
                     // Не сбрасываем состояние здесь, чтобы сохранить данные для истории

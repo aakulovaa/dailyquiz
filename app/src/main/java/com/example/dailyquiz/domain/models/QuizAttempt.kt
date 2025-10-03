@@ -9,5 +9,7 @@ data class QuizAttempt(
     val correctAnswers: Int,
     val totalQuestions: Int,
     val questions: List<Quiz>,
-    val timeOut: Boolean
+    val timeOut: Boolean,
+    val category: String? = null,
+    val difficulty: String? = null
 )

@@ -92,6 +92,10 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
     var remainingTime by remember { mutableIntStateOf(0) }
     var showTimeOutDialog by remember { mutableStateOf(false) }
 
+    // Получаем выбранные категорию и сложность из предыдущего экрана
+    val selectedCategory = navController.previousBackStackEntry?.savedStateHandle?.get<String>("selectedCategory") ?: "Общие знания"
+    val selectedDifficulty = navController.previousBackStackEntry?.savedStateHandle?.get<String>("selectedDifficulty") ?: "Легкая"
+
     // Запускаем таймер
     LaunchedEffect(Unit) {
         while (remainingTime < 300) {
@@ -119,7 +123,9 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
             correctAnswers = correctAnswers,
             totalQuestions = totalQuestions,
             questions = questions.map { it.copy() },
-            timeOut = true
+            timeOut = true,
+            category = selectedCategory,
+            difficulty = selectedDifficulty
         )
         historyViewModel.saveQuizAttempt(attempt)
     }
@@ -135,8 +141,11 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
                 currentQuestionIndex++
                 selectedAnswer = ""
             } else {
-                // Navigate to results
-                navController.currentBackStackEntry?.savedStateHandle?.set("quizQuestions", questions)
+                navController.currentBackStackEntry?.savedStateHandle?.apply {
+                    set("quizQuestions", questions)
+                    set("selectedCategory", selectedCategory)
+                    set("selectedDifficulty", selectedDifficulty)
+                }
                 navController.navigate("results")
             }
 

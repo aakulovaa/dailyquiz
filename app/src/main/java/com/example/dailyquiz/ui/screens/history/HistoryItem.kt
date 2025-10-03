@@ -3,9 +3,11 @@ package com.example.dailyquiz.ui.screens.history
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,7 +58,7 @@ fun HistoryItem(
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Box(modifier = Modifier.padding(24.dp).fillMaxWidth()
-            .height(60.dp)) {
+            .height(80.dp)) {
             // Заголовок викторины
             Text(
                 text = attempt.quizTitle,
@@ -95,6 +97,22 @@ fun HistoryItem(
                 color = Color.Black,
                 modifier = Modifier.align(Alignment.BottomEnd)
             )
+
+            Column(
+                modifier = Modifier.align(Alignment.BottomCenter).offset(y=(-10).dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Категория: ${attempt.category ?: "Общие знания"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black
+                )
+                Text(
+                    text = "Сложность: ${attempt.difficulty ?: "Легкая"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Black
+                )
+            }
         }
 
     }

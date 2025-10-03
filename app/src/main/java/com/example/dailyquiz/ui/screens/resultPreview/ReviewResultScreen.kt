@@ -88,6 +88,9 @@ fun ReviewResultScreen(
     val totalQuestions = safeAttempt.totalQuestions
     val questions = safeAttempt.questions
 
+    val selectedCategory = safeAttempt.category
+    val selectedDifficulty = safeAttempt.difficulty
+
     val filledStars = when (correctAnswers) {
         totalQuestions -> 5
         totalQuestions - 1 -> 4
@@ -131,7 +134,25 @@ fun ReviewResultScreen(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Категория: $selectedCategory",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Сложность: $selectedDifficulty",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Card(
             modifier = Modifier
@@ -192,12 +213,9 @@ fun ReviewResultScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Кнопка "Начать заново"
                 Button(
                     onClick = {
-                        // Очищаем данные викторины и полностью возвращаемся на главный экран
                         navController.previousBackStackEntry?.savedStateHandle?.remove<List<Quiz>>("quizQuestions")
-                        // Полностью очищаем back stack до главного экрана
                         navController.popBackStack("quiz", inclusive = false)
 
                     },
