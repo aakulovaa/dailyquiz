@@ -41,3 +41,7 @@
 Версии: Sdk — 36 agp = "8.12.0" kotlin = "2.0.21" coreKtx = "1.10.1" junit = "4.13.2"
 
 Подход к программированию — использование `Jetpack Compose`.
+
+
+https://github.com/user-attachments/assets/50f69677-d7be-43f0-952b-904b1d80212c
+
