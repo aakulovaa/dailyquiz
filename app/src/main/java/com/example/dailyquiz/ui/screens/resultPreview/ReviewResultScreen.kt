@@ -43,6 +43,7 @@ import com.example.dailyquiz.R
 import com.example.dailyquiz.data.repository.HistoryRepository
 import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
 import com.example.dailyquiz.data.viewModels.history.HistoryViewModelFactory
+import com.example.dailyquiz.domain.models.Quiz
 import com.example.dailyquiz.ui.theme.BorderColor
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 
@@ -194,7 +195,11 @@ fun ReviewResultScreen(
                 // Кнопка "Начать заново"
                 Button(
                     onClick = {
-                        navController.popBackStack()
+                        // Очищаем данные викторины и полностью возвращаемся на главный экран
+                        navController.previousBackStackEntry?.savedStateHandle?.remove<List<Quiz>>("quizQuestions")
+                        // Полностью очищаем back stack до главного экрана
+                        navController.popBackStack("quiz", inclusive = false)
+
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -359,7 +364,7 @@ fun ReviewResultScreen(
         // Кнопка "Начать заново"
         Button(
             onClick = {
-                navController.popBackStack()
+                navController.navigate("main")
             },
             modifier = Modifier
                 .width(280.dp)

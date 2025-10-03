@@ -3,7 +3,6 @@ package com.example.dailyquiz.data.viewModels.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.dailyquiz.data.repository.HistoryRepository
-import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
 
 class HistoryViewModelFactory(
     private val repository: HistoryRepository = HistoryRepository.Companion.getInstance()

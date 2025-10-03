@@ -170,8 +170,7 @@ fun ResultsScreen(
 
                 Button(
                     onClick = {
-                        navController.previousBackStackEntry?.savedStateHandle?.remove<List<Quiz>>("quizQuestions")
-                        navController.popBackStack("main", inclusive = false)
+                        navController.navigate("main")
                     },
                     modifier = Modifier
                         .fillMaxWidth()
