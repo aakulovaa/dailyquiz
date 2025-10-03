@@ -5,10 +5,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.dailyquiz.data.repository.HistoryRepository
-import com.example.dailyquiz.ui.screens.quiz.QuizScreen
 import com.example.dailyquiz.ui.screens.ResultsScreen
 import com.example.dailyquiz.ui.screens.history.HistoryScreen
 import com.example.dailyquiz.ui.screens.main.MainScreen
+import com.example.dailyquiz.ui.screens.quiz.QuizScreen
 import com.example.dailyquiz.ui.screens.resultPreview.ReviewResultScreen
 
 @Composable

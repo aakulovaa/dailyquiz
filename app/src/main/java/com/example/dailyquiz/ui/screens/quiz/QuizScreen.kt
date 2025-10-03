@@ -48,7 +48,6 @@ import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
 import com.example.dailyquiz.data.viewModels.history.HistoryViewModelFactory
 import com.example.dailyquiz.domain.models.Quiz
 import com.example.dailyquiz.domain.models.QuizAttempt
-import com.example.dailyquiz.ui.screens.AnswerOption
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 import kotlinx.coroutines.delay
 
@@ -84,6 +83,10 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var selectedAnswer by remember { mutableStateOf("") }
     val currentQuestion = questions[currentQuestionIndex]
+
+    // Состояние для подсветки ответов
+    var showAnswerFeedback by remember { mutableStateOf(false) }
+    var isTransitioning by remember { mutableStateOf(false) }
 
     // Таймер на 5 минут (300 секунд)
     var remainingTime by remember { mutableIntStateOf(0) }
@@ -121,6 +124,28 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
         historyViewModel.saveQuizAttempt(attempt)
     }
 
+    // Обработка подсветки и автоматического перехода
+    LaunchedEffect(showAnswerFeedback) {
+        if (showAnswerFeedback) {
+            // Ждем 2 секунды
+            delay(2000L)
+
+            // Переходим к следующему вопросу или завершаем
+            if (currentQuestionIndex < questions.size - 1) {
+                currentQuestionIndex++
+                selectedAnswer = ""
+            } else {
+                // Navigate to results
+                navController.currentBackStackEntry?.savedStateHandle?.set("quizQuestions", questions)
+                navController.navigate("results")
+            }
+
+            // Сбрасываем состояния
+            showAnswerFeedback = false
+            isTransitioning = false
+        }
+    }
+
     // Затемнение экрана при показе диалога
     if (showTimeOutDialog) {
         Box(
@@ -130,6 +155,8 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
         )
     }
 
+    // Блокируем интерфейс во время подсветки
+    val uiEnabled = !showAnswerFeedback && !isTransitioning
 
     Column(
     modifier = Modifier
@@ -144,12 +171,16 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { navController.popBackStack() }
+                onClick = { if (uiEnabled) {
+                    navController.popBackStack()
+                    }
+                },
+                enabled = uiEnabled
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Назад",
-                    tint = Color.White
+                    tint = if (uiEnabled) Color.White else Color.Gray
                 )
             }
 
@@ -212,13 +243,23 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
 
                 // Answer options
                 currentQuestion.quizOptions.forEach { option ->
-                    AnswerOption(
+                    val isCorrect = option == currentQuestion.quizCorrectAnswer
+                    val isSelected = selectedAnswer == option
+                    val showAsIncorrect = showAnswerFeedback && isSelected && !isCorrect
+                    val showAsCorrect = showAnswerFeedback && isCorrect
+
+                    AnswerOptionWithHighlight(
                         text = option,
-                        isSelected = selectedAnswer == option,
+                        isSelected = isSelected,
+                        isCorrect = showAsCorrect,
+                        isIncorrect = showAsIncorrect,
                         onOptionSelected = {
-                            selectedAnswer = option
-                            currentQuestion.quizUserAnswer = option
-                        }
+                            if (uiEnabled) {
+                                selectedAnswer = option
+                                currentQuestion.quizUserAnswer = option
+                            }
+                        },
+                        enabled = uiEnabled
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
@@ -227,13 +268,9 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
 
                 Button(
                     onClick = {
-                        if (currentQuestionIndex < questions.size - 1) {
-                            currentQuestionIndex++
-                            selectedAnswer = ""
-                        } else {
-                            // Navigate to results
-                            navController.currentBackStackEntry?.savedStateHandle?.set("quizQuestions", questions)
-                            navController.navigate("results")
+                        if (uiEnabled && selectedAnswer.isNotEmpty()) {
+                            isTransitioning = true
+                            showAnswerFeedback = true
                         }
                     },
                     modifier = Modifier
@@ -241,10 +278,10 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
                         .height(54.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryBackgroundColor,
+                        containerColor = if (uiEnabled) PrimaryBackgroundColor else Color.Gray,
                         contentColor = Color.White
                     ),
-                    enabled = selectedAnswer.isNotEmpty()
+                    enabled = selectedAnswer.isNotEmpty() && uiEnabled
                 ) {
                     Text(
                         text = if (currentQuestionIndex < questions.size - 1) "Далее".uppercase() else "Завершить".uppercase(),
@@ -255,10 +292,12 @@ fun QuizScreen(navController: NavController, repository: HistoryRepository) {
             }
         }
 
+
+
         Text(
             text = "Вернуться к предыдущим вопросам невозможно",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White,
+            color = if (uiEnabled) Color.White else Color.Gray,
             modifier = Modifier.fillMaxWidth().offset(y=(-55).dp),
             textAlign = TextAlign.Center
         )
