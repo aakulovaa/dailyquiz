@@ -1,6 +1,5 @@
 package com.example.dailyquiz.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -12,15 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
+    primary = PrimaryBackgroundColor,
     secondary = PurpleGrey80,
-    tertiary = Pink80
+    tertiary = Pink80,
+    background = PrimaryBackgroundColor
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
+    primary = PrimaryBackgroundColor,
     secondary = PurpleGrey40,
-    tertiary = Pink40
+    tertiary = Pink40,
+    background = PrimaryBackgroundColor
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
