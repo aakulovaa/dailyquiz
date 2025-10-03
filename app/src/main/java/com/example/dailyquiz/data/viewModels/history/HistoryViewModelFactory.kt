@@ -1,11 +1,12 @@
-package com.example.dailyquiz.ui.screens.history
+package com.example.dailyquiz.data.viewModels.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.dailyquiz.data.repository.HistoryRepository
+import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
 
 class HistoryViewModelFactory(
-    private val repository: HistoryRepository = HistoryRepository.getInstance()
+    private val repository: HistoryRepository = HistoryRepository.Companion.getInstance()
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HistoryViewModel::class.java)) {

@@ -1,4 +1,4 @@
-package com.example.dailyquiz.ui.screens.history
+package com.example.dailyquiz.data.viewModels.history
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

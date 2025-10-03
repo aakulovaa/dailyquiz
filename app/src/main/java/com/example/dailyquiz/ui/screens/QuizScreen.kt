@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,44 +41,33 @@ import com.example.dailyquiz.R
 import com.example.dailyquiz.domain.models.Quiz
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 
-val testQuestions = listOf(
-    Quiz(
-        quizId = 1,
-        quizQuestion = "Столица Франции?",
-        quizOptions = listOf("Лондон", "Берлин", "Париж", "Мадрид"),
-        quizCorrectAnswer = "Париж"
-    ),
-    Quiz(
-        quizId = 2,
-        quizQuestion = "2 + 2 = ?",
-        quizOptions = listOf("3", "4", "5", "6"),
-        quizCorrectAnswer = "4"
-    ),
-    Quiz(
-        quizId = 1,
-        quizQuestion = "Столица Франции?",
-        quizOptions = listOf("Лондон", "Берлин", "Париж", "Мадрид"),
-        quizCorrectAnswer = "Париж"
-    ),
-    Quiz(
-        quizId = 2,
-        quizQuestion = "2 + 2 = ?",
-        quizOptions = listOf("3", "4", "5", "6"),
-        quizCorrectAnswer = "4"
-    ),
-    Quiz(
-        quizId = 2,
-        quizQuestion = "2 + 2 = ?",
-        quizOptions = listOf("3", "4", "5", "6"),
-        quizCorrectAnswer = "4"
-    )
-)
-
 @Composable
 fun QuizScreen(navController: NavController) {
+    val questions = navController.previousBackStackEntry?.savedStateHandle?.get<List<Quiz>>("quizQuestions")
+        ?: emptyList()
+
+    if (questions.isEmpty()) {
+        // Обработка случая, когда вопросы не переданы
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(PrimaryBackgroundColor)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Вопросы не загружены", color = Color.White)
+            Button(onClick = { navController.popBackStack() }) {
+                Text("Назад")
+            }
+        }
+        return
+    }
+
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var selectedAnswer by remember { mutableStateOf("") }
-    val currentQuestion = testQuestions[currentQuestionIndex]
+    val currentQuestion = questions[currentQuestionIndex]
+
 
     Column(
         modifier = Modifier
@@ -107,24 +97,25 @@ fun QuizScreen(navController: NavController) {
                 modifier = Modifier.size(200.dp)
             )
 
-            Spacer(modifier = Modifier.size(28.dp))
+            Spacer(modifier = Modifier.size(10.dp))
         }
 
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset(y=(-10).dp)
                 .padding(horizontal = 8.dp),
             shape = RoundedCornerShape(24.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.White
             )
-            ) {
+        ) {
             Column(
                 modifier = Modifier.padding(24.dp)
             ) {
                 Text(
-                    text = "Вопрос ${currentQuestionIndex + 1} из ${testQuestions.size}",
+                    text = "Вопрос ${currentQuestionIndex + 1} из ${questions.size}",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFCEC9FF),
@@ -161,11 +152,12 @@ fun QuizScreen(navController: NavController) {
 
                 Button(
                     onClick = {
-                        if (currentQuestionIndex < testQuestions.size - 1) {
+                        if (currentQuestionIndex < questions.size - 1) {
                             currentQuestionIndex++
                             selectedAnswer = ""
                         } else {
                             // Navigate to results
+                            navController.currentBackStackEntry?.savedStateHandle?.set("quizQuestions", questions)
                             navController.navigate("results")
                         }
                     },
@@ -180,7 +172,7 @@ fun QuizScreen(navController: NavController) {
                     enabled = selectedAnswer.isNotEmpty()
                 ) {
                     Text(
-                        text = if (currentQuestionIndex < testQuestions.size - 1) "Далее".uppercase() else "Завершить".uppercase(),
+                        text = if (currentQuestionIndex < questions.size - 1) "Далее".uppercase() else "Завершить".uppercase(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold
                     )
@@ -188,7 +180,7 @@ fun QuizScreen(navController: NavController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
         Text(
             text = "Вернуться к предыдущим вопросам невозможно",

@@ -32,20 +32,22 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dailyquiz.R
 import com.example.dailyquiz.data.repository.HistoryRepository
+import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
+import com.example.dailyquiz.data.viewModels.history.HistoryViewModelFactory
 import com.example.dailyquiz.domain.models.Quiz
 import com.example.dailyquiz.domain.models.QuizAttempt
-import com.example.dailyquiz.ui.screens.history.HistoryViewModel
-import com.example.dailyquiz.ui.screens.history.HistoryViewModelFactory
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 
 @Composable
 fun ResultsScreen(
     navController: NavController,
-    repository: HistoryRepository,
-    questions: List<Quiz> = testQuestions
+    repository: HistoryRepository
 ) {
-    val correctAnswers = testQuestions.count { it.quizUserAnswer == it.quizCorrectAnswer }
-    val totalQuestions = testQuestions.size
+    val questions = navController.previousBackStackEntry?.savedStateHandle?.get<List<Quiz>>("quizQuestions")
+        ?: emptyList()
+
+    val correctAnswers = questions.count { it.quizUserAnswer == it.quizCorrectAnswer }
+    val totalQuestions = questions.size
 
     val viewModel: HistoryViewModel = viewModel(
         factory = HistoryViewModelFactory(repository)
@@ -168,7 +170,7 @@ fun ResultsScreen(
 
                 Button(
                     onClick = {
-                        questions.forEach { it.quizUserAnswer = null }
+                        navController.previousBackStackEntry?.savedStateHandle?.remove<List<Quiz>>("quizQuestions")
                         navController.popBackStack("main", inclusive = false)
                     },
                     modifier = Modifier

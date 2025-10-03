@@ -35,6 +35,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dailyquiz.R
 import com.example.dailyquiz.data.repository.HistoryRepository
+import com.example.dailyquiz.data.viewModels.history.HistoryViewModel
+import com.example.dailyquiz.data.viewModels.history.HistoryViewModelFactory
 import com.example.dailyquiz.domain.models.QuizAttempt
 import com.example.dailyquiz.ui.theme.PrimaryBackgroundColor
 
