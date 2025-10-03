@@ -48,7 +48,8 @@ fun MainScreen(navController: NavController) {
                     },
                     onHistory = {
                         navController.navigate("history")
-                    }
+                    },
+                    viewModel = viewModel
                 )
             }
 
